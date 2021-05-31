@@ -17,15 +17,26 @@ user = api.model('Model', {
 class UserApi(Resource):
     @api.marshal_with(user, envelope='resource')
     def get(self, **kwargs):
-        return User.query.all()
+        try:
+            users= User.query.all()
+            print(users)
+            return users
+        except Exception as e:
+            print("======:> er")
+            return {"error"}
         # return  {"name":usrs.first_name, 'email':usrs.email}
 
     def post(self):
         if request.method == 'POST':
             name = request.form.get('name')
             email = request.form.get('email')
+            try:
 
-            user = User(first_name=name, email=email)
-            db.session.add(user)
-            db.session.commit()
-            return {"name":user.first_name, 'email':user.email}
+                user = User(first_name=name, email=email)
+                db.session.add(user)
+                db.session.commit()
+            except Exception as e:
+                print("======:> er", e)
+
+                return {"error"}
+            return {"name":name, 'email':email}
