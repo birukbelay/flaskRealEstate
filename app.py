@@ -20,7 +20,9 @@ todo_model = api.model('Model', {
     'date_updated': fields.DateTime(dt_format='rfc822'),
 
 })
-
+@app.route("/")
+def index():
+    return "Hello this is the new version!"
 @api.route('/todo')
 class Todo(Resource):
     @api.marshal_with(todo_model, envelope='resource')
