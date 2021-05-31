@@ -1,5 +1,5 @@
 from flask import Blueprint, request
-from flask_restx import Api, Resource, fields
+from flask_restx import Api, Resource
 
 # from .models import User
 # from werkzeug.security import generate_password_hash, check_password_hash
