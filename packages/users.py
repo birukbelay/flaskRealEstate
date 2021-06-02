@@ -31,7 +31,6 @@ class UserApi(Resource):
             name = request.form.get('name')
             email = request.form.get('email')
             try:
-
                 user = User(first_name=name, email=email)
                 db.session.add(user)
                 db.session.commit()
