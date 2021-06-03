@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+import os
 
 app = Flask(__name__)
 db = SQLAlchemy(app)
@@ -7,9 +8,9 @@ app.config['SECRET_KEY'] = 'hjshjhdjah kjshkjdhjs'
 
 Env = 'dev'
 if Env == 'dev':
-    app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:54123@localhost:5432/books_review"
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('LOCAL_POSTGRES_KEY')
 else:
-    app.config['SQLALCHEMY_DATABASE_URI'] = "postgres://rygzpgaazcnyyb:ea7fe9df1881379cf43397a997b5f6d5c740b034b8c20afd5fe61f45199c2053@ec2-3-215-57-87.compute-1.amazonaws.com:5432/d842t2f117c8dc"
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('HEROKU_POSTGRES_KEY')
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
