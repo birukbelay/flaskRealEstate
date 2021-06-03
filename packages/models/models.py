@@ -1,4 +1,6 @@
 from packages import db
+
+
 #
 
 class User(db.Model):
@@ -31,3 +33,8 @@ class User(db.Model):
 
     def update(self):
         db.session.commit()
+
+
+if __name__ == '__main__':
+    db.drop_all()
+    db.create_all()
