@@ -28,6 +28,7 @@ class UserApi(Resource):
 
     def post(self):
         if request.method == 'POST':
+            print("-----------------------", "heere")
             name = request.form.get('name')
             email = request.form.get('email')
             try:
