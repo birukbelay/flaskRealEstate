@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, flash, jsonify
 from flask_restx import Api, fields, Resource
-from .models import User
+from .models.models import User
 from . import db
 
 users = Blueprint('views', __name__)
