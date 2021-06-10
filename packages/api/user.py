@@ -1,7 +1,7 @@
-from flask import Blueprint, render_template, request, flash, jsonify
+from flask import Blueprint, request, jsonify
 from flask_restx import Api, fields, Resource
-from .models.user import User
-from . import db
+from packages.models.user import User
+from packages import db
 
 users = Blueprint('views', __name__)
 api = Api(users)

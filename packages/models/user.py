@@ -11,9 +11,9 @@ class User(db.Model):
     password = db.Column(db.String(150))
     houses = db.relationship('House', backref='user', lazy=True)
 
-    def __init__(self, first_name, email):
-        self.first_name = first_name
-        self.email = email
+    # def __init__(self, first_name, email):
+    #     self.first_name = first_name
+    #     self.email = email
 
     def __repr__(self):
         return {

@@ -1,4 +1,5 @@
 from packages import app, db
+from packages.models.user import User
 
 
 if __name__ == '__main__':
@@ -14,3 +15,9 @@ def init_db_command():
 def db_drop_and_create_all():
     db.drop_all()
     db.create_all()
+
+@app.cli.command('seed_db')
+def seed_db():
+    db.session.add(User(first_name='bura', email="bura@gmail.com", password="1234"))
+    db.session.add(User(first_name='bura2', email="bura2@gmail.org", password="1234"))
+    db.session.commit()

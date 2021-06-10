@@ -20,8 +20,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
-from .auth import auth
-from .user import users
+from packages.api.auth import auth
+from packages.api.user import users
 
 app.register_blueprint(users, url_prefix='/users')
 app.register_blueprint(auth, url_prefix='/')
