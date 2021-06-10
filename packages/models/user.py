@@ -6,17 +6,16 @@ from packages import db
 class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
-
     first_name = db.Column(db.String(150))
     email = db.Column(db.String(150), unique=True)
-
     password = db.Column(db.String(150))
+    houses = db.relationship('House', backref='user', lazy=True)
 
     def __init__(self, first_name, email):
         self.first_name = first_name
         self.email = email
 
-    def details(self):
+    def __repr__(self):
         return {
             'id': self.id,
             'email': self.email,
@@ -35,6 +34,4 @@ class User(db.Model):
         db.session.commit()
 
 
-if __name__ == '__main__':
-    db.drop_all()
-    db.create_all()
+

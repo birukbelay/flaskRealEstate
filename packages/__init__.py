@@ -4,9 +4,11 @@ import os
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'hjshjhdjah kjshkjdhjs'
+app.config["DEBUG"] = True
 
 Env = 'de'
-uri = os.getenv("DATABASE_URL")
+uri = os.getenv("DATABASE_URL", "")
+print("uri:--",uri)
 if uri.startswith("postgres://"):
     uri = uri.replace("postgres://", "postgresql://", 1)
 
@@ -18,12 +20,12 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
-
 from .auth import auth
-from .users import users
+from .user import users
 
 app.register_blueprint(users, url_prefix='/users')
 app.register_blueprint(auth, url_prefix='/')
+
 
 @app.errorhandler(500)
 def server_error(error):
@@ -32,14 +34,5 @@ def server_error(error):
         "error": 500,
         "message": "server error"
     }),
+
 # db.create_all()
-
-
-@app.cli.command('init-db')
-def init_db_command():
-    db.create_all()
-
-@app.cli.command('reclean-db')
-def db_drop_and_create_all():
-    db.drop_all()
-    db.create_all()

@@ -1,11 +1,10 @@
 from flask import Blueprint, render_template, request, flash, jsonify
 from flask_restx import Api, fields, Resource
-from .models.models import User
+from .models.user import User
 from . import db
 
 users = Blueprint('views', __name__)
 api = Api(users)
-
 
 user = api.model('Model', {
     'name': fields.String(attribute='first_name'),
@@ -13,12 +12,13 @@ user = api.model('Model', {
 
 })
 
+
 @api.route('/', methods=['GET', 'POST'])
 class UserApi(Resource):
     @api.marshal_with(user, envelope='resource')
     def get(self, **kwargs):
         try:
-            users= User.query.all()
+            users = User.query.all()
             print(users)
             return users
         except Exception as e:
@@ -39,4 +39,4 @@ class UserApi(Resource):
                 print("======:> er", e)
 
                 return {"error"}
-            return {"name":name, 'email':email}
+            return {"name": name, 'email': email}
