@@ -1,7 +1,7 @@
-from packages import app, db
-from packages.models.user import User
+from src import create_app, db
+from src.models.user import User
 
-
+app = create_app("dev")
 if __name__ == '__main__':
     app.run(debug=True)
 

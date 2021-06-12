@@ -1,7 +1,9 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request
 from flask_restx import Api, fields, Resource
-from packages.models.user import User
-from packages import db
+
+from src.packages.decorators import token_required
+from src.models.user import User
+from src import db
 
 users = Blueprint('views', __name__)
 api = Api(users)
@@ -26,6 +28,7 @@ class UserApi(Resource):
             return {"error"}
         # return  {"name":usrs.first_name, 'email':usrs.email}
 
+    @token_required
     def post(self):
         if request.method == 'POST':
             print("-----------------------", "heere")
