@@ -3,12 +3,17 @@ from src.models.user import User
 from sqlalchemy.exc import IntegrityError
 
 from src.domain.decorators import encode_access_token
+from src.utils.loging import autolog
+from src.utils.passowrd import generate_hash
 from src.utils.result import Result
 
 
 def process_login(email, password):
     user = User.find_by_email(email)
-    if not user or not user.check_password(password):
+    autolog("user", user)
+    if not user:
+        return Result.Fail("email or password does not match")
+    if not user.check_password(password):
         return Result.Fail("email or password does not match")
     access_token = encode_access_token(user.id, user.role)
     return Result.Ok(access_token)
@@ -18,8 +23,7 @@ def process_signup(email, password):
     try:
         if User.find_by_email(email):
             return Result.Fail(f"{email} is already registered")
-
-        new_user = User(email=email, password_hash=password)
+        new_user = User(email=email, password_hash=generate_hash(password))
         db.session.add(new_user)
         db.session.commit()
         access_token = encode_access_token(new_user.id, new_user.role)

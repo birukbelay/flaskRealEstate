@@ -15,8 +15,6 @@ class Login(Resource):
     @auth_ns.expect(user_reqparser)
     def post(self):
         try:
-            autolog("here")
-
             email = request.form.get('email')
             passwd = request.form.get('password')
             result = process_login(email, passwd)

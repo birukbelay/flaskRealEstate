@@ -4,6 +4,7 @@ from src import db
 from uuid import uuid4
 
 from src.utils.date import utc_now
+from src.utils.loging import autolog
 from src.utils.passowrd import compare_password
 
 
@@ -25,11 +26,8 @@ class User(db.Model):
     #     self.password_hash=password
 
     def __repr__(self):
-        return {
-            'public_id': self.public_id,
-            'email': self.email,
-            'name': self.first_name,
-        }
+        return f"public_id:{self.public_id}, email: {self.email}, name: {self.first_name},"
+
 
     def insert(self):
         db.session.add(self)
@@ -44,6 +42,7 @@ class User(db.Model):
         db.session.commit()
 
     def check_password(self, password):
+        autolog(self.password_hash, password)
         return compare_password(self.password_hash, password)
 
     @classmethod

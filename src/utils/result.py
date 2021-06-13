@@ -1,3 +1,5 @@
+from src.utils.loging import autolog, autolog_forResult
+
 
 class Result:
     """Represent the outcome of an operation."""
@@ -11,7 +13,7 @@ class Result:
     @staticmethod
     def Fail(error_message):
         """Create a Result object for a failed operation."""
-        print("error message", error_message)
+        autolog_forResult("Fail", error_message)
         return Result(False, value=None, error=error_message)
 
     @staticmethod
