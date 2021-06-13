@@ -2,7 +2,6 @@ from src import db
 
 
 class House(db.Model):
-
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.Text, nullable=True)
     type = db.Column(db.String, nullable=False)
@@ -11,4 +10,6 @@ class House(db.Model):
     area_name = db.Column(db.String, nullable=False)
     posted_date = db.Column(db.DateTime, nullable=False)
     location = db.Column(db.JSON)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+    owner_id = db.Column(db.Integer, db.ForeignKey('site_user.id'), nullable=False)
+    owner = db.relationship("User", backref=db.backref("houses"))

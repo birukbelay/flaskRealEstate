@@ -38,8 +38,10 @@ def admin_token_required(f):
 
 def _check_access_token(admin_only):
     token = request.headers.get("Authorization")
+    print("---",request.headers)
     if not token:
-        raise Unauthorized(description="Unauthorized")
+        print("> not authorized")
+        raise Unauthorized(description="Unauthorized User")
     result = decode_access_token(token)
     if result.failure:
         raise Unauthorized(

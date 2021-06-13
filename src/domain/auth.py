@@ -2,7 +2,7 @@ from src import db
 from src.models.user import User
 from sqlalchemy.exc import IntegrityError
 
-from src.packages.decorators import encode_access_token
+from src.domain.decorators import encode_access_token
 from src.utils.result import Result
 
 

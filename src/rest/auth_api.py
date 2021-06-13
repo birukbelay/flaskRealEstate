@@ -2,32 +2,37 @@ import http
 from http import HTTPStatus
 
 from flask import Blueprint, request, jsonify, current_app
-from flask_restx import Api, Resource
+from flask_restx import Api, Resource, Namespace
 from flask_restx import abort
-from src.packages.auth import process_login, process_signup
+from src.domain.auth import process_login, process_signup
+from src.rest.dto import user_reqparser
+from src.utils.loging import autolog
 
-auth = Blueprint('auth', __name__)
-api = Api(auth)
+auth_ns = Namespace(name="auth", validate=True)
 
-
-@api.route('/login', methods=['GET', 'POST'])
+@auth_ns.route('/login', methods=['GET', 'POST'])
 class Login(Resource):
-    def get(self):
+    @auth_ns.expect(user_reqparser)
+    def post(self):
         try:
+            autolog("0)))))))))))))")
+
             email = request.form.get('email')
             passwd = request.form.get('password')
-
             result = process_login(email, passwd)
             if result.failure:
                 abort(HTTPStatus.UNAUTHORIZED, "email or password does not match", status="fail")
             return _create_response(result.value, HTTPStatus.OK, "successfully logged in")
 
         except AttributeError:
-            return "email or passowrd wrong"
+            return "email or passowrd wrong", 400
+        except Exception as e:
+            return {"error":e.args}, 500
 
 
-@api.route('/signup', methods=['GET', 'POST'])
+@auth_ns.route('/signup', methods=['GET', 'POST'])
 class Signup(Resource):
+    @auth_ns.expect(user_reqparser)
     def post(self):
         try:
             email = request.form.get('email', None)
