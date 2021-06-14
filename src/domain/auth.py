@@ -10,13 +10,13 @@ from src.utils.result import Result
 
 def process_login(email, password):
     user = User.find_by_email(email)
-    autolog("user", user)
+
     if not user:
         return Result.Fail("email or password does not match")
     if not user.check_password(password):
         return Result.Fail("email or password does not match")
     access_token = encode_access_token(user.id, user.role)
-    return Result.Ok(access_token)
+    return Result.Ok({"access_token" : access_token, "user": user.__repr__()})
 
 
 def process_signup(email, password):

@@ -1,9 +1,11 @@
-from src.utils.loging import autolog, autolog_forResult
+from json import JSONEncoder
+
+from src.utils.loging import autolog, autolog_plus
 
 
 class Result:
     """Represent the outcome of an operation."""
-
+    success = bool
     def __init__(self, success, value, error):
         """Represent the outcome of an operation."""
         self.success = success
@@ -13,7 +15,7 @@ class Result:
     @staticmethod
     def Fail(error_message):
         """Create a Result object for a failed operation."""
-        autolog_forResult("Fail", error_message)
+        autolog_plus(f"Fail=", error_message)
         return Result(False, value=None, error=error_message)
 
     @staticmethod
@@ -55,3 +57,8 @@ class Result:
         if self.value:
             return func(self.value, *args, **kwargs)
         return func(*args, **kwargs)
+
+
+class EmployeeEncoder(JSONEncoder):
+    def default(self, o):
+        return o.__dict__

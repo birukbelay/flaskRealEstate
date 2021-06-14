@@ -5,12 +5,12 @@ from datetime import datetime, timezone, timedelta
 
 import jwt
 
+from src.utils.loging import autolog
 from src.utils.result import Result
 
 
 def token_required(f):
     """Execute function if request contains valid access token."""
-
     @wraps(f)
     def decorated(*args, **kwargs):
         token_payload = _check_access_token(admin_only=False)
@@ -23,7 +23,6 @@ def token_required(f):
 
 def admin_token_required(f):
     """Execute function if request contains valid access token AND user is admin."""
-
     @wraps(f)
     def decorated(*args, **kwargs):
         token_payload = _check_access_token(admin_only=True)
@@ -38,9 +37,8 @@ def admin_token_required(f):
 
 def _check_access_token(admin_only):
     token = request.headers.get("Authorization")
-    print("---",request.headers)
     if not token:
-        print("> not authorized")
+        autolog("> not authorized")
         raise Unauthorized(description="Unauthorized User")
     result = decode_access_token(token)
     if result.failure:

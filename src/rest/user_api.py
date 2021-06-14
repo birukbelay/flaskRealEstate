@@ -1,16 +1,17 @@
 import http
+import json
 from http import HTTPStatus
 
 from flask import Blueprint, request, jsonify
 from flask_restx import Api, fields, Resource, Namespace, marshal
 
 from src.domain.decorators import token_required
-from src.domain.user import create_user
+from src.domain.user import create_user, get_users_list
 from src.models.user import User
 from src import db
 from src.rest.dto import pagination_reqparser, pagination_links_model, pagination_model
 from src.rest.dto.users import user_model, create_user_reqparser, users_pagination_model, users_List_model
-from src.utils.loging import autolog
+from src.utils.loging import autolog, autolog_plus
 
 user_ns = Namespace(name="user", validate=True)
 user_ns.models[user_model.name] = user_model
@@ -34,29 +35,53 @@ class UsersApi(Resource):
     @user_ns.doc(security="Bearer")
     @user_ns.expect(create_user_reqparser)
     def post(self):
-        user_dict = create_user_reqparser.parse_args()
-
-        result = create_user(user_dict)
-        if result.failure:
-            autolog(f"log on fail===<> err={result.error} , value{result.value}")
-            print(">////mes", result.value,"err", result.error)
-            return _create_response(HTTPStatus.UNAUTHORIZED, result.error)
-        return _create_response(HTTPStatus.CREATED, result.value)
-
-    @user_ns.doc(security="Bearer")
-    @user_ns.response(HTTPStatus.OK, "Retrieved user list.", users_List_model)
-    @user_ns.expect(pagination_reqparser)
-    # @user_ns.marshal_with(users_List_model, )
-    def get(self, **kwargs):
         try:
-            users = User.query.all()
-            print("usrs are -----|",users)
-            response_data = marshal(users, users_List_model)
-            return response_data
+            user_dict = create_user_reqparser.parse_args()
+            result = create_user(user_dict)
+            if result.failure:
+                autolog("failed result detected", result.error.args)
+                # errs = json.dumps(result.error.__dict__)
+                return _create_error_response(HTTPStatus.BAD_REQUEST, result.error.args)
+            return _create_response(HTTPStatus.CREATED, result.value)
         except Exception as e:
-            print("======:> er", e)
+            return _create_error_response(HTTPStatus.INTERNAL_SERVER_ERROR, e.args)
+
+
+    @user_ns.response(HTTPStatus.OK, "Retrieved user list.", users_List_model)
+
+    @user_ns.expect(pagination_reqparser)
+    # @user_ns.marshal_with(users_pagination_model)
+    def get(self):
+        try:
+            request_data = pagination_reqparser.parse_args()
+            page = request_data.get("page")
+            per_page = request_data.get("per_page")
+            result= get_users_list(page, per_page)
+            if result.failure:
+                return "err", 500
+            autolog("pag", result.value)
+            # users = User.query.all()
+            response = jsonify(result.value)
+            response.headers["Link"] = result.value["Link"]
+            response.headers["Total-Count"] = result.value["Total-Count"]
+
+            return response
+            # return result.value
+        except Exception as e:
+            print("======:> er", e.args)
             return "error"
         # return  {"name":usrs.first_name, 'email':usrs.email}
+
+
+def _create_error_response(status_code, message):
+    autolog_plus("error:", message)
+    response = jsonify(
+        status=http.HTTPStatus(status_code),
+        message="error",
+
+    )
+    response.status_code = status_code
+    return response
 
 
 def _create_response(status_code, message):

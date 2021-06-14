@@ -1,5 +1,5 @@
-from werkzeug.security import generate_password_hash
-from flask import current_app
+
+# db = SQLAlchemy()
 from src import db
 from uuid import uuid4
 
@@ -9,9 +9,9 @@ from src.utils.passowrd import compare_password
 
 
 class User(db.Model):
-
+    __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
-    first_name = db.Column(db.String(150))
+    name = db.Column(db.String(150))
 
     email = db.Column(db.String(150), unique=True)
     password_hash = db.Column(db.String(150))
@@ -26,7 +26,7 @@ class User(db.Model):
     #     self.password_hash=password
 
     def __repr__(self):
-        return f"public_id:{self.public_id}, email: {self.email}, name: {self.first_name},"
+        return f"public_id:{self.public_id}, email: {self.email}, name: {self.name}, role:{self.role}"
 
 
     def insert(self):
