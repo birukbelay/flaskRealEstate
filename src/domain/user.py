@@ -18,6 +18,8 @@ def create_user(user_dict):
     try:
         email = user_dict["email"]
         passw = user_dict["password"]
+
+        # calls generate hash function to return the hash of the password
         user_dict["password_hash"]= generate_hash(passw)
 
         if User.find_by_email(email):
@@ -26,6 +28,8 @@ def create_user(user_dict):
 
         user_dict.pop("password")
         user_dict.pop("file")
+
+        # user=User(email=email, password_hash=)
         user = User(**user_dict)
 
         db.session.add(user)
@@ -41,16 +45,18 @@ def create_user(user_dict):
 
 def get_users_list(page, per_page):
     try:
-        pagination = User.query.paginate(page, per_page, error_out=False)
-        response_data = marshal(pagination, users_pagination_model)
-        autolog("pag-", response_data)
+        a= User.query.findall()
+        # pagination = User.query.paginate(page, per_page, error_out=False)
+        #
+        # response_data = marshal(pagination, users_pagination_model)
+        # autolog("pag-", response_data)
+        #
+        # response_data["links"] = _pagination_nav_links(pagination)
+        #
+        # response_data["Link"] = _pagination_nav_header_links(pagination)
+        # response_data["Total-Count"] = pagination.total
 
-        response_data["links"] = _pagination_nav_links(pagination)
-
-        response_data["Link"] = _pagination_nav_header_links(pagination)
-        response_data["Total-Count"] = pagination.total
-
-        return Result.Ok(response_data)
+        return Result.Ok(a)
     except Exception as e:
         return Result.Fail(e)
 

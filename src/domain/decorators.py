@@ -85,4 +85,5 @@ def encode_access_token(id, role):
 
     payload = dict(exp=expire, iat=now, sub=id, role=role)
     key = current_app.config.get("SECRET_KEY")
+
     return jwt.encode(payload, key, algorithm="HS256")

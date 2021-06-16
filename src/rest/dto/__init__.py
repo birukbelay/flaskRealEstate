@@ -25,6 +25,8 @@ user_reqparser.add_argument(
     name="password", type=str, location="form", required=True, nullable=False,
 )
 
+
+# user request parser
 pagination_reqparser = RequestParser(bundle_errors=True)
 pagination_reqparser.add_argument("page", type=positive, required=False, default=1)
 pagination_reqparser.add_argument(

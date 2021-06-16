@@ -17,9 +17,13 @@ class Login(Resource):
         try:
             email = request.form.get('email')
             passwd = request.form.get('password')
+
+            # calls the process login function
             result = process_login(email, passwd)
-            if result.failure:
+
+            if not result.succeed:
                 abort(HTTPStatus.UNAUTHORIZED, "email or password does not match", status="fail")
+
             return _create_response(result.value, HTTPStatus.OK, "successfully logged in")
 
         except AttributeError:
@@ -35,6 +39,7 @@ class Signup(Resource):
         try:
             email = request.form.get('email', None)
             password = request.form.get('password', None)
+
             if not email:
                 return 'Missing email', 400
             if not password:
@@ -46,17 +51,17 @@ class Signup(Resource):
                 # return abort(HTTPStatus.UNAUTHORIZED, "email or password does not match", status="fail")
                 return _create_response("",HTTPStatus.UNAUTHORIZED ,result.error)
             res = _create_response(result.value, HTTPStatus.OK, message="successfully registered")
-            return  res
+            return res
         except Exception as e:
             print("err-----", e)
             return {"error":e.args}, 500
 
 
-def _get_token_expire_time():
-    token_age_h = current_app.config.get("TOKEN_EXPIRE_HOURS")
-    token_age_m = current_app.config.get("TOKEN_EXPIRE_MINUTES")
-    expires_in_seconds = token_age_h * 3600 + token_age_m * 60
-    return expires_in_seconds if not current_app.config["TESTING"] else 5
+# def _get_token_expire_time():
+#     token_age_h = current_app.config.get("TOKEN_EXPIRE_HOURS")
+#     token_age_m = current_app.config.get("TOKEN_EXPIRE_MINUTES")
+#     expires_in_seconds = token_age_h * 3600 + token_age_m * 60
+#     return expires_in_seconds if not current_app.config["TESTING"] else 5
 
 
 def _create_response(token, status_code, message):
@@ -64,10 +69,10 @@ def _create_response(token, status_code, message):
         status=http.HTTPStatus(status_code),
         message=message,
         access_token=token,
-        token_type="bearer",
-        expires_in=_get_token_expire_time(),
+        # token_type="bearer",
+        # expires_in=_get_token_expire_time(),
     )
     response.status_code = status_code
-    response.headers["Cache-Control"] = "no-store"
-    response.headers["Pragma"] = "no-cache"
+    # response.headers["Cache-Control"] = "no-store"
+    # response.headers["Pragma"] = "no-cache"
     return response

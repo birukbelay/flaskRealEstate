@@ -38,6 +38,7 @@ class DevelopmentConfig(Config):
     TOKEN_EXPIRE_MINUTES = 15
     # SQLALCHEMY_DATABASE_URI = uri
     SQLALCHEMY_DATABASE_URI = os.getenv('LOCAL_POSTGRES_KEY')
+    SECRET_KEY = os.getenv("SECRET_KEY", "open sesame")
     DEBUG = True
 
 

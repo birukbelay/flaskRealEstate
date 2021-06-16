@@ -37,7 +37,9 @@ class UsersApi(Resource):
     def post(self):
         try:
             user_dict = create_user_reqparser.parse_args()
+
             result = create_user(user_dict)
+
             if result.failure:
                 autolog("failed result detected", result.error.args)
                 # errs = json.dumps(result.error.__dict__)
