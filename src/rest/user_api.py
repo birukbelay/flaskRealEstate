@@ -6,11 +6,12 @@ from flask import Blueprint, request, jsonify
 from flask_restx import Api, fields, Resource, Namespace, marshal
 
 from src.domain.decorators import token_required
-from src.domain.user import create_user, get_users_list
+from src.domain.user import create_user, get_one_user, update_user, delete_user, get_alluser
 from src.models.user import User
 from src import db
 from src.rest.dto import pagination_reqparser, pagination_links_model, pagination_model
-from src.rest.dto.users import user_model, create_user_reqparser, users_pagination_model, users_List_model
+from src.rest.dto.users import user_model, create_user_reqparser, users_pagination_model, users_List_model, \
+    update_user_reqparser
 from src.utils.loging import autolog, autolog_plus
 
 user_ns = Namespace(name="user", validate=True)
@@ -29,7 +30,7 @@ user_ns.models[users_List_model.name] = users_List_model
 
 
 @user_ns.route("", endpoint="users")
-class UsersApi(Resource):
+class UsersList(Resource):
     """Handles HTTP requests to URL: /users."""
 
     @user_ns.doc(security="Bearer")
@@ -50,29 +51,46 @@ class UsersApi(Resource):
 
 
     @user_ns.response(HTTPStatus.OK, "Retrieved user list.", users_List_model)
-
     @user_ns.expect(pagination_reqparser)
-    # @user_ns.marshal_with(users_pagination_model)
+    @user_ns.marshal_with(user_model)
     def get(self):
         try:
             request_data = pagination_reqparser.parse_args()
-            page = request_data.get("page")
-            per_page = request_data.get("per_page")
-            result= get_users_list(page, per_page)
+            result = get_alluser()
             if result.failure:
-                return "err", 500
-            autolog("pag", result.value)
-            # users = User.query.all()
-            response = jsonify(result.value)
-            response.headers["Link"] = result.value["Link"]
-            response.headers["Total-Count"] = result.value["Total-Count"]
-
-            return response
-            # return result.value
+                return {"faild to get user"}, 400
+            return result.value, 200
         except Exception as e:
             print("======:> er", e.args)
             return "error"
         # return  {"name":usrs.first_name, 'email':usrs.email}
+
+@user_ns.route("/<id>", endpoint="user")
+class User_Api(Resource):
+    @user_ns.marshal_with(user_model)
+    def get(self, id):
+        result = get_one_user(id)
+        if result.failure:
+            return {"faild to get user"}, 400
+        return result.value, 200
+
+    # @user_ns.expect(update_user_reqparser)
+    @user_ns.marshal_with(user_model)
+    def post(self, id):
+        user_dict = update_user_reqparser.parse_args()
+        result = update_user(id, user_dict)
+        if result.failure:
+            return {"failed to update"}, 400
+        return result.value, 201
+    @user_ns.marshal_with(user_model)
+    def delete(self, id):
+        result = delete_user(id)
+        if result.failure:
+            return {"failed to delete"}, 400
+        return result.value, 204
+
+
+
 
 
 def _create_error_response(status_code, message):

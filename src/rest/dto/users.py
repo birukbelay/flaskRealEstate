@@ -11,6 +11,7 @@ from src.rest.dto import widget_name, pagination_model, user_reqparser, paginati
 
 
 create_user_reqparser = user_reqparser.copy()
+
 create_user_reqparser.add_argument(
     "name", type=widget_name, location="form", required=False, nullable=True,
     case_sensitive=True,
@@ -24,14 +25,18 @@ create_user_reqparser.add_argument(
 create_user_reqparser.add_argument('file', location='files', type=FileStorage, required=False)
 
 update_user_reqparser = create_user_reqparser.copy()
+update_user_reqparser.add_argument(
+    "id", type=widget_name, location="form", required=False, nullable=True,
+)
 update_user_reqparser.remove_argument("profile")
-update_user_reqparser.replace_argument('password', required=False, nullable=True, location='json')
+update_user_reqparser.replace_argument('password', required=False, nullable=True)
 
 # response Models
 
 user_model = Model(
     "User",
     {
+        "id" : Integer,
         "email": String,
         "public_id": String,
         "role": String,
