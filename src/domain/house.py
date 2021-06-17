@@ -26,10 +26,10 @@ def delete_house(id):
     try:
         house = House.query.get_or_404(id)
         if not house:
-            return Result.Fail("no user by this id")
+            return Result.Fail("no house by this id")
         db.session.delete(house)
         db.session.commit()
-        return Result.Ok("user deleted")
+        return Result.Ok("house deleted")
     except Exception as e:
         return Result.Fail(e.args)
 
@@ -54,3 +54,14 @@ def update_house(id, house_dict):
         return Result.Ok(message)
     except Exception as e:
         return Result.Fail(e)
+def search_house(searchstring):
+    try:
+        house = House.query.get_or_404(searchstring)
+        if not house:
+            return Result.Fail("no house by this name")
+        house = House.filter(House.description.like('%'+searchstring+'%'))
+        houses = house.order_by(House.description).all()
+        return Result.ok(houses)
+    except Exception as e:
+        return Result.Fail(e)
+
