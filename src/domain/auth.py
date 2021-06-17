@@ -25,7 +25,7 @@ def process_login(email, password):
 def process_signup(email, password):
     try:
         if User.find_by_email(email):
-            return Result.Fail(f"{email} is already registered")
+            return Result.Fail(f"{email}  is already registered")
         new_user = User(email=email, password_hash=generate_hash(password))
         db.session.add(new_user)
         db.session.commit()

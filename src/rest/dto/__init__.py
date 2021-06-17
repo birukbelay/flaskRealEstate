@@ -1,6 +1,6 @@
 import re
 
-from flask_restx import Model
+from flask_restx import Model, fields
 from flask_restx.fields import Nested, Boolean, Integer, List, String
 from flask_restx.inputs import positive, email
 from flask_restx.reqparse import RequestParser
@@ -54,3 +54,23 @@ pagination_model = Model(
 
     },
 )
+
+
+
+# class UnreadItem(fields.Raw):
+#     def format(self, value):
+#         return "Unread" if value & 0x02 else "Read"
+
+
+# class AllCapsString(fields.Raw):
+#     def format(self, value):
+#         return value.upper()
+
+
+# todo_model = api.model('Model', {
+#     'name': fields.String,
+#     'all_caps_name': AllCapsString(attribute='name'),
+#     'address': fields.String,
+#     'status': UnreadItem(attribute='flags'),
+#     'date_updated': fields.DateTime(dt_format='rfc822'),
+# })

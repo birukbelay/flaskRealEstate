@@ -2,6 +2,7 @@ from flask import Blueprint
 from flask_restx import Api
 
 from src.rest.auth_api import auth_ns
+from src.rest.houses import house_ns
 from src.rest.user_api import user_ns
 
 api_bp = Blueprint('api', __name__, url_prefix="/api/v1")
@@ -18,3 +19,4 @@ api = Api(
 
 api.add_namespace(auth_ns, path='')
 api.add_namespace(user_ns, path='/user')
+api.add_namespace(house_ns, path='/house')

@@ -65,7 +65,7 @@ class UsersList(Resource):
             return "error"
         # return  {"name":usrs.first_name, 'email':usrs.email}
 
-@user_ns.route("/<id>", endpoint="user")
+@user_ns.route ("/<id>", endpoint="user")
 class User_Api(Resource):
     @user_ns.marshal_with(user_model)
     def get(self, id):
@@ -98,7 +98,6 @@ def _create_error_response(status_code, message):
     response = jsonify(
         status=http.HTTPStatus(status_code),
         message="error",
-
     )
     response.status_code = status_code
     return response
